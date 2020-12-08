@@ -4,21 +4,17 @@ import re
 
 def generate_rules():
     final_rules = {}
-    for rule in fileinput.input():
-        rule = rule.strip('.\n').split(' contain ')
-        parent_bag, children_bags = rule[0], rule[1]
-        parent_bag = parent_bag.rstrip('s')
-        bags = []
-        for bag in children_bags.split(', '):
-            bag = re.sub(r"[0-9]{1}[\s]", "", bag)
-            bags.append(bag.rstrip('s'))
-        final_rules[parent_bag] = bags
+    for line in fileinput.input():
+        colors = re.findall(r'(\w* \w*) bag', line)
+        parent = colors[0]
+        secondary = list(colors[1:])
+        final_rules[parent] = secondary
     return final_rules
 
 def contains_shiny_gold(rules):
     contain_shiny_gold = []
     for parent_bag in rules.keys():
-        if 'shiny gold bag' in rules[parent_bag]:
+        if 'shiny gold' in rules[parent_bag]:
             contain_shiny_gold.append(parent_bag)
             del rules[parent_bag]
     return contain_shiny_gold, rules
