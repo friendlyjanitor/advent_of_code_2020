@@ -51,43 +51,27 @@ def boot_code(rules):
 
 
 def code_repair(rules):
-    for rule in range(len(rules)):
-        if rules[rule][0] == 'acc':
+    for i in range(len(rules)):
+        if final_rules[i][0] == "acc":
             continue
 
-        if rules[rule][0] == 'nop':
-            tmp_rules = rules
-            tmp_rules[rule] = ('jmp', rules[rule][1])
+        if final_rules[i][0] == "nop":
+            copy = rules.copy()
+            copy[i] = ["jmp", rules[i][1]]
 
         else:
-            tmp_rules = rules
-            tmp_rules[rule] = ('nop', rules[rule][1])
+            copy = rules.copy()
+            copy[i] = ["nop", rules[i][1]]
 
-
-        acc = boot_code(tmp_rules)
-        if acc:
-            print (rule)
-            print (acc)
+        x = boot_code(copy)
+        if x:
+            print(x)
+            break
 
 
 
 
 final_rules = generate_rules()
 #boot_code(final_rules, 0, 0)
-#code_repair(final_rules)
-for i in range(len(final_rules)):
-    if final_rules[i][0] == "acc":
-        continue
+code_repair(final_rules)
 
-    if final_rules[i][0] =="nop":
-        copy = final_rules.copy()
-        copy[i] = ["jmp", final_rules[i][1]]
-
-    else:
-        copy = final_rules.copy()
-        copy[i] = ["nop", final_rules[i][1]]
-
-    x = boot_code(copy)
-    if x:
-        print(x)
-        break
