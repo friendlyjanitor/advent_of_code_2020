@@ -30,6 +30,7 @@ def find_adapter_sets(adapters):
     counted_adapters = {0:1}
     for adapter in sorted(adapters):
         counted_adapters[adapter] = 0
+        import pdb;pdb.set_trace()
         if adapter - 1 in counted_adapters:
             counted_adapters[adapter] += counted_adapters[adapter-1]
         if adapter - 2 in counted_adapters:
