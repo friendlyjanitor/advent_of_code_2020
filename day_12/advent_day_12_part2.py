@@ -1,7 +1,7 @@
 import fileinput
 import re
 
-COMPASS = {0: ['N', 'W'], 90: ['E', 'N'], 180: ['S', 'E'], 270: ['W', 'S']}
+COMPASS = {0: 'N', 90: 'E', 180: 'S', 270: 'W'}
 
 def generate_instructions():
     instructions = []
@@ -17,33 +17,41 @@ def _parse_instructions(instruction):
     return direction, amount
 
 
-def turn_ship(amount, direction, ship_direction):
+def turn_ship(amount, direction, ship_ew, ship_ns):
+
     if direction == 'L':
-        ship_direction = (ship_direction - amount) %360
+        for _ in range(amount//90):
+            ship_ew, ship_ns = -ship_ns, ship_ew
     else:
-        ship_direction = (ship_direction + amount) %360
-    return ship_direction
+        for _ in range(amount // 90):
+            ship_ew, ship_ns = ship_ns, -ship_ew
+    return ship_ew, ship_ns
 
 
-def find_direction_move(ship_direction, amount, manhattan_distance):
-    direction = COMPASS[ship_direction]
-    manhattan_distance[direction] += amount
-    return manhattan_distance
+
+
+
+
 
 def move_ship(instructions):
-    ship_direction = 90
-    manhattan_distance = {'N': 0, 'S': 0, 'E': 0, 'W': 0}
+    total_ew,total_ns = 0,0
+    ship_ew, ship_ns = 10, 1
     for step in instructions:
         direction, amount = _parse_instructions(step)
         if direction in ['L', 'R']:
-            ship_direction = turn_ship(amount, direction, ship_direction)
-        if direction in ['N', 'W', 'E', 'S']:
-             manhattan_distance[direction] += amount
-        if direction in ['F']:
-            manhattan_distance = find_direction_move(ship_direction, amount, manhattan_distance)
-    north_sourth = abs((manhattan_distance['N'] - manhattan_distance['S']))
-    east_west = abs((manhattan_distance['E'] - manhattan_distance['W']))
-    print (north_sourth + east_west)
+            ship_ew, ship_ns = turn_ship(amount, direction, ship_ew, ship_ns)
+        if direction == 'N':
+             ship_ns += amount
+        if direction == 'E':
+            ship_ew += amount
+        if direction == 'S':
+            ship_ns -= amount
+        if direction == 'W':
+            ship_ew -= amount
+        elif direction == 'F':
+            total_ew += (ship_ew * amount)
+            total_ns += (ship_ns * amount)
+    print (abs(total_ns) + abs(total_ew))
 
 
 
